@@ -99,7 +99,7 @@ export default Vue.extend({
 .bg {
   position: relative;
   min-height: 100vh;
-  background: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a3.png'),
+  background: url('@/static/group-punch/a3.png'),
     linear-gradient(180deg, #ffbd79 77%, #ffbd79 100%);
   background-size: 100%;
   background-repeat: no-repeat;
@@ -112,7 +112,7 @@ export default Vue.extend({
     margin: 0 auto;
     padding-top: 126rpx;
     padding-bottom: 38rpx;
-    background-image: url($topImg), url('https://cos.wshoto.com/marketing-wxapp/group-punch/a7.png');
+    background-image: url($topImg), url('@/static/group-punch/a7.png');
     background-size: 100% 128px, 100% 40rpx;
     background-position: left top, left bottom;
     background-repeat: no-repeat, no-repeat;
@@ -130,12 +130,12 @@ export default Vue.extend({
   }
   @mixin boxMiddle {
     padding: 0 56rpx;
-    background: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a8.png') repeat-y;
+    background: url('@/static/group-punch/a8.png') repeat-y;
     background-size: 100% 24rpx;
   }
 
   .calendar-box {
-    @include boxStyle('https://cos.wshoto.com/marketing-wxapp/group-punch/a6.png');
+    @include boxStyle('@/static/group-punch/a6.png');
     padding-top: 100rpx;
     height: auto;
     margin-top: 0;
@@ -145,7 +145,7 @@ export default Vue.extend({
     }
   }
   .rules-box {
-    @include boxStyle('https://cos.wshoto.com/marketing-wxapp/group-punch/a6.png');
+    @include boxStyle('@/static/group-punch/a6.png');
     height: auto;
     margin-top: 48rpx;
     .rules-content {

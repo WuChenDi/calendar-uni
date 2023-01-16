@@ -1,36 +1,23 @@
 <template>
   <view class="calendar">
     <view class="header">
-      <!-- <view class="title">
-        <view class="header-wrap">
-          <view class="flex">
-            <view class="title">{{ title }}</view>
-            <view class="month">
-              <block v-if="title">(</block>
-              {{ selectDay.year }}年{{ selectDay.month }}月
-              <block v-if="title">)</block>
-            </view>
-          </view>
-          <block v-if="goNow">
-            <view
-              v-if="
-                open &&
-                !(nowDay.year == selectDay.year && nowDay.month == selectDay.month && nowDay.day == selectDay.day)
-              "
-              class="today"
-              @click="switchNowDate"
-            >
-              今日
-            </view>
-          </block>
-        </view>
-      </view> -->
       <view class="title-new">
         <view class="before">
           <view class="before-year" @click="beforeYearFn"></view>
           <view class="before-month" @click="beforeMonthFn"></view>
         </view>
-        <view class="month"> {{ selectDay.year }}年 {{ selectDay.month }}月 </view>
+        <view class="month-text">
+          <view class="month"> {{ selectDay.year }}年 {{ selectDay.month }}月 </view>
+          <view
+            class="today"
+            @click="switchNowDate"
+            v-if="
+              goNow && !(nowDay.year == selectDay.year && nowDay.month == selectDay.month && nowDay.day == selectDay.day)
+            "
+          >
+            今日
+          </view>
+        </view>
         <view class="after">
           <view class="after-month" @click="afterMonthFn"></view>
           <view class="after-year" @click="afterYearFn"></view>
@@ -68,7 +55,7 @@
                   hasNowFnClass(item, nowDay),
                   hasNowMonthFnClass(item, selectDay),
                   hasSelectFnClass(item, calendar, oldCurrent, index),
-                  hasDisableFnClass(item, disabledDateList),
+                  hasDisableFnClass(item, disabledDateList)
                 ]"
                 @click.stop="selectChange"
                 :data-disabled="!!hasDisableFnClass(item, disabledDateList)"
@@ -96,41 +83,42 @@
 import Vue from 'vue'
 
 export default Vue.extend({
+  name: 'calendar',
   props: {
     //标点的日期
     spotMap: {
       type: Object,
       default() {
         return {}
-      },
+      }
     },
     //标记的日期，默认为今日 注意：传入格式推荐为'2022/1/2'或'2022/01/02', 其他格式在ios系统上可能出现问题
     defaultTime: {
       type: String,
-      default: '',
+      default: ''
     },
     // 是否有快速回到今天的功能
     goNow: {
       type: Boolean,
-      default: true,
+      default: false
     },
     // 是否是打开状态
     defaultOpen: {
       type: Boolean,
-      default: false,
+      default: false
     },
     // 是否显示收缩展开功能
     showShrink: {
       type: Boolean,
-      default: true,
+      default: true
     },
     // 指定不可用日期
     disabledDate: Function,
     // 要改变的日期
     changeTime: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   data() {
     return {
@@ -147,7 +135,7 @@ export default Vue.extend({
       swiperDuration: 500,
       swiperHeight: 0,
       backChange: false, // 跳过change切换
-      disabledDateList: {}, // 禁用的日期集合
+      disabledDateList: {} // 禁用的日期集合
     }
   },
   computed: {
@@ -156,7 +144,7 @@ export default Vue.extend({
       return [dateList0, dateList1, dateList2]
 
       // return Object.assign({}, dateList0, dateList1, dateList2)
-    },
+    }
   },
   watch: {
     // 重新设置打开状态
@@ -175,8 +163,8 @@ export default Vue.extend({
         console.log(val)
         console.log(this.nowDay)
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   created() {},
   onReady() {
@@ -184,7 +172,7 @@ export default Vue.extend({
     let selectDay = {
       year: now.getFullYear(),
       month: now.getMonth() + 1,
-      day: now.getDate(),
+      day: now.getDate()
     }
     this.nowDay = selectDay
     this.setMonthFn(selectDay.year, selectDay.month, selectDay.day, true)
@@ -313,7 +301,7 @@ export default Vue.extend({
           setYear: this.selectDay.year,
           setMonth: this.open ? this.selectDay.month : this.selectDay.month - 1,
           setDay: this.selectDay.day + 7,
-          dateIndex: rest,
+          dateIndex: rest
         })
       } else {
         // 向左划的情况，日期减少
@@ -344,7 +332,7 @@ export default Vue.extend({
           setYear: this.selectDay.year,
           setMonth: this.open ? this.selectDay.month - 2 : this.selectDay.month - 1,
           setDay: this.selectDay.day - 7,
-          dateIndex: rest,
+          dateIndex: rest
         })
       }
       this.oldCurrent = e.detail.current
@@ -377,7 +365,7 @@ export default Vue.extend({
         setYear: appointMonth.getFullYear(),
         setMonth: appointMonth.getMonth() + 1,
         setDay: appointMonth.getDate(),
-        hasBack: true,
+        hasBack: true
       })
       const disabledDateList = {}
       if (this.disabledDate) {
@@ -413,7 +401,7 @@ export default Vue.extend({
       this.selectDay = {
         year: setYear,
         month: setMonth,
-        day: setDay || Math.min(new Date(setYear, setMonth, 0).getDate(), this.selectDay.day),
+        day: setDay || Math.min(new Date(setYear, setMonth, 0).getDate(), this.selectDay.day)
       }
       if ((this.selectDay.year !== setYear || this.selectDay.month !== setMonth) && !setDay) {
         this.open = !setDay
@@ -536,7 +524,7 @@ export default Vue.extend({
         this.selectDay = {
           year: setDate.getFullYear(),
           month: setDate.getMonth() + 1,
-          day: setDate.getDate(),
+          day: setDate.getDate()
         }
       }
       this.triggerEventSelectDay()
@@ -560,7 +548,7 @@ export default Vue.extend({
         setYear: this.selectDay.year,
         setMonth: this.selectDay.month,
         setDay: this.selectDay.day,
-        asBack: false,
+        asBack: false
       }
     ) {
       // console.log('日历主体的渲染方法')
@@ -626,7 +614,7 @@ export default Vue.extend({
         obj = {
           day: now2.getDate(),
           month: now2.getMonth() + 1,
-          year: now2.getFullYear(),
+          year: now2.getFullYear()
         }
         dateList[i] = obj
       }
@@ -687,7 +675,7 @@ export default Vue.extend({
         setYear: setDate.getFullYear(),
         setMonth: setDate.getMonth(),
         setDay: setDate.getDate(),
-        dateIndex: index,
+        dateIndex: index
       })
     },
     /**
@@ -727,8 +715,8 @@ export default Vue.extend({
     afterYearFn() {
       const { year, month, day } = this.selectDay
       this.witchDate(new Date(year + 1, month - 1, day))
-    },
-  },
+    }
+  }
 })
 </script>
 
@@ -747,23 +735,6 @@ export default Vue.extend({
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.today {
-  width: 88rpx;
-  height: 42rpx;
-  background: #f3f4f4;
-  border-radius: 22rpx;
-  font-size: 24rpx;
-  line-height: 42rpx;
-  color: #868d8d;
-  text-align: center;
-  margin-right: 6rpx;
-}
-
-.today:active {
-  background: #dfdfdf;
-  color: #5f6464;
 }
 
 .direction-column {
@@ -841,7 +812,7 @@ export default Vue.extend({
 }
 
 .icon {
-  background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a10.png');
+  background-image: url('@/static/group-punch/a10.png');
   background-size: 100% auto;
   width: 24rpx;
   height: 24rpx;
@@ -860,72 +831,106 @@ export default Vue.extend({
   .header {
     background: #ffffff;
     border-radius: 16px 16px 0px 0px;
+
     .title-new {
       display: flex;
       height: 72rpx;
+
       .before {
         display: flex;
         align-items: center;
+
         &-year {
           width: 32rpx;
           height: 32rpx;
-          background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a16.png');
+          background-image: url('@/static/group-punch/a16.png');
           background-size: 100% auto;
+
           &:active {
-            background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a12.png');
+            background-image: url('@/static/group-punch/a12.png');
           }
         }
+
         &-month {
           width: 32rpx;
           height: 32rpx;
-          background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a17.png');
+          background-image: url('@/static/group-punch/a17.png');
           background-size: 100% auto;
           margin-left: 16rpx;
+
           &:active {
-            background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a13.png');
+            background-image: url('@/static/group-punch/a13.png');
           }
         }
       }
-      .month {
+
+      .month-text {
         flex: 1;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 24rpx;
-        font-weight: 500;
-        color: #222222;
+
+        .month {
+          font-size: 24rpx;
+          font-weight: 500;
+          color: #222222;
+        }
+
+        .today {
+          width: 88rpx;
+          height: 42rpx;
+          background: linear-gradient(169deg, #ff9134 0%, #fa6044 100%);
+          border-radius: 8rpx;
+          font-size: 24rpx;
+          line-height: 42rpx;
+          color: #fff;
+          text-align: center;
+          margin-left: 40rpx;
+        }
+
+        .today:active {
+          background: linear-gradient(169deg, #ff9134 0%, #f1310f 100%);
+        }
       }
+
       .after {
         display: flex;
         align-items: center;
+
         &-year {
           width: 32rpx;
           height: 32rpx;
-          background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a19.png');
+          background-image: url('@/static/group-punch/a19.png');
           background-size: 100% auto;
+
           &:active {
-            background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a15.png');
+            background-image: url('@/static/group-punch/a15.png');
           }
         }
+
         &-month {
           width: 32rpx;
           height: 32rpx;
-          background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a18.png');
+          background-image: url('@/static/group-punch/a18.png');
           background-size: 100% auto;
           margin-right: 16rpx;
+
           &:active {
-            background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a14.png');
+            background-image: url('@/static/group-punch/a14.png');
           }
         }
       }
     }
   }
+
   .calendar-con {
     background: #fff8f1;
     border-radius: 12px;
+
     .calendar-week {
       line-height: 40rpx;
       padding: 16rpx 0 8rpx 0;
+
       .view {
         width: 100rpx;
         text-align: center;
@@ -936,69 +941,76 @@ export default Vue.extend({
       }
     }
   }
+
   .calendar-main {
     transition: height 0.3s;
     align-content: flex-start;
     overflow: hidden;
+
     .day {
       display: flex;
       justify-content: center;
       width: 90rpx;
       position: relative;
       text-align: center;
+
       .bg1 {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 64rpx;
         height: 64rpx;
-        // TODO: 需要替换
-        // background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a24.png');
-        background-image: url('@/static/a24.png');
+        background-image: url('@/static/group-punch/a24.png');
         background-size: 100% auto;
         font-size: 24rpx;
         font-weight: 500;
         color: #fa6044;
         border-radius: 50%;
       }
+
       // 标记
       .sign {
-        background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a11.png');
+        background-image: url('@/static/group-punch/a11.png');
+        background-size: 100% auto;
       }
+
       // 当前日期
       .now {
-        // TODO: 需要替换
-        // background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a25.png');
-        background-image: url('@/static/a25.png');
+        background-image: url('@/static/group-punch/a25.png');
+        background-size: 100% auto;
         color: #fff;
       }
+
       // 选中
       .select {
-        // TODO: 设计图未提供
-        // background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a11.png');
-        background: rgb(56, 10, 2);
+        background-image: url('@/static/group-punch/a26.png');
+        background-size: 100% auto;
         color: #fff;
       }
+
       // 单前日期+选中
       .now.select {
-        // TODO: 设计图未提供
-        // background-image: url('https://cos.wshoto.com/marketing-wxapp/group-punch/a11.png');
-        background: rgba(250, 96, 68, 1);
+        background-image: url('@/static/group-punch/a26.png');
+        background-size: 100% auto;
         color: #fff;
       }
+
       // 禁止
       .disabled {
         color: rgba(250, 96, 68, 0.5);
       }
+
       .other-month {
         color: rgba(250, 96, 68, 0.5);
       }
     }
+
     .fold-day {
       .bg1 {
         margin-bottom: 24rpx;
       }
     }
+
     .unfold-day {
       .bg1 {
         margin-bottom: 0rpx;
