@@ -11,7 +11,7 @@
           <view
             v-if="
               goNow &&
-              !(nowDay.year == selectDay.year && nowDay.month == selectDay.month && nowDay.day == selectDay.day)
+              !(nowDay.year === selectDay.year && nowDay.month === selectDay.month && nowDay.day === selectDay.day)
             "
             class="today"
             @click="switchNowDate"
@@ -202,16 +202,24 @@ export default Vue.extend({
       return ''
     },
     /**
-     * 当前日期的逻辑计算(显示今天的日期)
+     * 今日日期逻辑计算(显示今天的日期)
      * @param item
      * @param nowDay
      * @returns {string}
      */
     hasNowFnClass(item, nowDay) {
-      if (item.year === nowDay.year && item.month === nowDay.month && item.day === nowDay.day) {
-        return 'now'
-      }
-      return ''
+      return item.year === nowDay.year && item.month === nowDay.month && item.day === nowDay.day ? 'now' : ''
+    },
+    /**
+     * 日期渲染字段，单前只有日期跟今天，作为扩展方法（未完成）
+     *
+     * 例如： 16 或 今
+     * @param item
+     * @returns {any}
+     */
+    dayTextFn(item) {
+      return !!this.hasNowFnClass(item, this.nowDay) ? '今' : item.day
+      // return item.day
     },
     /**
      * 当前月的逻辑计算(其他月的日期变灰)
@@ -220,10 +228,7 @@ export default Vue.extend({
      * @returns {string}
      */
     hasNowMonthFnClass(item, selectDay) {
-      if (item.year === selectDay.year && item.month === selectDay.month) {
-        return ''
-      }
-      return 'other-month'
+      return item.year === selectDay.year && item.month === selectDay.month ? '' : 'other-month'
     },
     /**
      * 选中日期的逻辑计算(选中的日期变色)
@@ -313,9 +318,9 @@ export default Vue.extend({
      */
     setSwiperHeight(index) {
       if (this[`dateList${index}`].length === 7) {
-        this.swiperHeight = 104
+        this.swiperHeight = 84
       } else {
-        this.swiperHeight = (this[`dateList${index}`].length / 7) * 82 + 38
+        this.swiperHeight = (this[`dateList${index}`].length / 7) * 82 + 18
       }
     },
     /**
@@ -536,10 +541,10 @@ export default Vue.extend({
         this.selectDay = selectDay
         this.triggerEventSelectDay()
       }
-      // 只有点击的时候才更新数据 calendar
-      this.$nextTick(() => {
+      if (!disabled) {
+        // 只有点击的时候才更新数据 calendar
         this.calendar = this.selectDay
-      })
+      }
     },
     // 选择某天时触发的事件
     triggerEventSelectDay() {
@@ -722,7 +727,7 @@ export default Vue.extend({
 .calendar {
   .header {
     background: #ffffff;
-    border-radius: 16px 16px 0px 0px;
+    border-radius: 16px 16px 0 0;
 
     .title-new {
       display: flex;
@@ -827,7 +832,6 @@ export default Vue.extend({
         width: 100rpx;
         text-align: center;
         font-size: 24rpx;
-        font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 400;
         color: #555555;
       }
@@ -862,11 +866,11 @@ export default Vue.extend({
 
       // 标记
       .sign {
-        background-image: url('@/static/group-punch/a11.png');
+        background-image: url('@/static/group-punch/a27.png');
         background-size: 100% auto;
       }
 
-      // 当前日期
+      // 今日日期
       .now {
         background-image: url('@/static/group-punch/a25.png');
         background-size: 100% auto;
@@ -880,9 +884,16 @@ export default Vue.extend({
         color: #fff;
       }
 
-      // 单前日期+选中
+      // 今日日期+选中
       .now.select {
         background-image: url('@/static/group-punch/a26.png');
+        background-size: 100% auto;
+        color: #fff;
+      }
+
+      // 标记+选中
+      .sign.select {
+        background-image: url('@/static/group-punch/a11.png');
         background-size: 100% auto;
         color: #fff;
       }
