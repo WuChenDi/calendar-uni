@@ -28,13 +28,13 @@
     <view class="calendar-con">
       <!-- 日历头部 -->
       <view class="flex-around calendar-week">
+        <view class="view">日</view>
         <view class="view">一</view>
         <view class="view">二</view>
         <view class="view">三</view>
         <view class="view">四</view>
         <view class="view">五</view>
         <view class="view">六</view>
-        <view class="view">日</view>
       </view>
       <!-- 日历主体 -->
       <swiper
@@ -483,12 +483,10 @@ export default Vue.extend({
       let now = new Date(setYear, setMonth - 1)
       // 目标月1号对应的星期
       let startWeek = now.getDay()
-      // 重新定义星期将星期天替换为6其余-1
-      let resetStartWeek = startWeek == 0 ? 6 : startWeek - 1
       // 当前月有多少天
       let dayNum = new Date(setYear, setMonth, 0).getDate()
       // 当前月跨越的周数
-      let forNum = Math.ceil((resetStartWeek + dayNum) / 7) * 7
+      let forNum = Math.ceil((startWeek + dayNum) / 7) * 7
       let selectDay = setDay || this.selectDay.day
       const isOpen = this.open
       /**
@@ -499,8 +497,8 @@ export default Vue.extend({
       for (let i = 0; i < (isOpen ? forNum : 7); i++) {
         const now2 = new Date(now)
         isOpen
-          ? now2.setDate(i - resetStartWeek + 1)
-          : now2.setDate(Math.ceil((selectDay + (startWeek - 1)) / 7) * 7 - 6 - (startWeek - 1) + i) // 当前周的7天
+          ? now2.setDate(i - startWeek + 1)
+          : now2.setDate(Math.ceil((selectDay + (startWeek - 1)) / 7) * 7 - 6 - startWeek + i) // 当前周的7天
         let obj = {}
         obj = {
           day: now2.getDate(),
