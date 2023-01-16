@@ -9,11 +9,12 @@
         <view class="month-text">
           <view class="month"> {{ selectDay.year }}年 {{ selectDay.month }}月 </view>
           <view
+            v-if="
+              goNow &&
+              !(nowDay.year == selectDay.year && nowDay.month == selectDay.month && nowDay.day == selectDay.day)
+            "
             class="today"
             @click="switchNowDate"
-            v-if="
-              goNow && !(nowDay.year == selectDay.year && nowDay.month == selectDay.month && nowDay.day == selectDay.day)
-            "
           >
             今日
           </view>
@@ -168,14 +169,13 @@ export default Vue.extend({
   },
   created() {},
   onReady() {
-    let now = this.defaultTime ? new Date(this.defaultTime) : new Date()
-    let selectDay = {
-      year: now.getFullYear(),
-      month: now.getMonth() + 1,
-      day: now.getDate()
+    const now = this.defaultTime ? new Date(this.defaultTime) : new Date()
+    this.nowDay = {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+      day: new Date().getDate()
     }
-    this.nowDay = selectDay
-    this.setMonthFn(selectDay.year, selectDay.month, selectDay.day, true)
+    this.setMonthFn(now.getFullYear(), now.getMonth() + 1, now.getDate(), true)
     this.updateList(now, -1, 0)
     this.updateList(now, 0, 1)
     this.updateList(now, 1, 2)
@@ -267,73 +267,42 @@ export default Vue.extend({
         this.backChange = false
         return
       }
-      //计算第三个索引
+      // 计算第三个索引
       const rest = 3 - e.detail.current - this.oldCurrent
       const dif = e.detail.current - this.oldCurrent
-      // let date
 
       if (dif === -2 || (dif > 0 && dif !== 2)) {
         // 向右划的情况，日期增加
-        // if (this.open) {
-        //   date = new Date(this.selectDay.year, this.selectDay.month)
-        //   this.setMonthFn(date.getFullYear(), date.getMonth() + 1, undefined)
-        //   this.getIndexList({
-        //     setYear: this.selectDay.year,
-        //     setMonth: this.selectDay.month,
-        //     dateIndex: rest,
-        //   })
-        // } else {
-        //   date = new Date(this.selectDay.year, this.selectDay.month - 1, this.selectDay.day + 7)
-        //   this.setMonthFn(date.getFullYear(), date.getMonth() + 1, date.getDate())
-        //   this.getIndexList({
-        //     setYear: this.selectDay.year,
-        //     setMonth: this.selectDay.month - 1,
-        //     setDay: this.selectDay.day + 7,
-        //     dateIndex: rest,
-        //   })
-        // }
-
         const date = this.open
           ? new Date(this.selectDay.year, this.selectDay.month)
           : new Date(this.selectDay.year, this.selectDay.month - 1, this.selectDay.day + 7)
         this.setMonthFn(date.getFullYear(), date.getMonth() + 1, this.open ? undefined : date.getDate())
-        this.getIndexList({
+
+        const result = {
           setYear: this.selectDay.year,
           setMonth: this.open ? this.selectDay.month : this.selectDay.month - 1,
           setDay: this.selectDay.day + 7,
           dateIndex: rest
-        })
+        }
+        this.open && delete result.setDay
+
+        this.getIndexList(result)
       } else {
         // 向左划的情况，日期减少
-        // if (this.open) {
-        //   date = new Date(this.selectDay.year, this.selectDay.month - 2)
-        //   this.setMonthFn(date.getFullYear(), date.getMonth() + 1, undefined)
-        //   this.getIndexList({
-        //     setYear: this.selectDay.year,
-        //     setMonth: this.selectDay.month - 2,
-        //     dateIndex: rest,
-        //   })
-        // } else {
-        //   date = new Date(this.selectDay.year, this.selectDay.month - 1, this.selectDay.day - 7)
-        //   this.setMonthFn(date.getFullYear(), date.getMonth() + 1, date.getDate())
-        //   this.getIndexList({
-        //     setYear: this.selectDay.year,
-        //     setMonth: this.selectDay.month - 1,
-        //     setDay: this.selectDay.day - 7,
-        //     dateIndex: rest,
-        //   })
-        // }
-
         const date = this.open
           ? new Date(this.selectDay.year, this.selectDay.month - 2)
           : new Date(this.selectDay.year, this.selectDay.month - 1, this.selectDay.day - 7)
         this.setMonthFn(date.getFullYear(), date.getMonth() + 1, this.open ? undefined : date.getDate())
-        this.getIndexList({
+
+        const result = {
           setYear: this.selectDay.year,
           setMonth: this.open ? this.selectDay.month - 2 : this.selectDay.month - 1,
-          setDay: this.selectDay.day - 7,
+          setDay: this.open ? this.selectDay.day - 7 : undefined,
           dateIndex: rest
-        })
+        }
+        this.open && delete result.setDay
+
+        this.getIndexList(result)
       }
       this.oldCurrent = e.detail.current
       this.setSwiperHeight(e.detail.current)
@@ -414,37 +383,6 @@ export default Vue.extend({
         this.triggerEventSelectDay()
       })
     },
-
-    // 设置月份
-    // setMonthFn(setYear, setMonth, setDay) {
-    //   const day = Math.min(new Date(setYear, setMonth, 0).getDate(), this.selectDay.day)
-    //   if (this.selectDay.year !== setYear || this.selectDay.month !== setMonth) {
-    //     const data = {
-    //       selectDay: {
-    //         year: setYear,
-    //         month: setMonth,
-    //         day: setDay ? setDay : day,
-    //       },
-    //     }
-    //     if (!setDay) {
-    //       data.open = true
-    //     }
-    //     this.selectDay = data.selectDay
-
-    //     this.triggerEventSelectDay()
-    //   } else {
-    //     const data = {
-    //       selectDay: {
-    //         year: setYear,
-    //         month: setMonth,
-    //         day: setDay ? setDay : day,
-    //       },
-    //     }
-    //     this.selectDay = data.selectDay
-
-    //     this.triggerEventSelectDay()
-    //   }
-    // },
     /**
      * 展开收起
      */
@@ -454,19 +392,6 @@ export default Vue.extend({
       this.open = !this.open
       // 更新数据
       const selectDate = new Date(this.selectDay.year, this.selectDay.month - 1, this.selectDay.day)
-      // if (this.oldCurrent === 0) {
-      //   this.updateList(selectDate, -1, 2)
-      //   this.updateList(selectDate, 0, 0)
-      //   this.updateList(selectDate, 1, 1)
-      // } else if (this.oldCurrent === 1) {
-      //   this.updateList(selectDate, -1, 0)
-      //   this.updateList(selectDate, 0, 1)
-      //   this.updateList(selectDate, 1, 2)
-      // } else if (this.oldCurrent === 2) {
-      //   this.updateList(selectDate, -1, 1)
-      //   this.updateList(selectDate, 0, 2)
-      //   this.updateList(selectDate, 1, 0)
-      // }
       switch (this.oldCurrent) {
         case 0:
           this.updateList(selectDate, -1, 2)
@@ -565,40 +490,6 @@ export default Vue.extend({
       // 当前月跨越的周数
       let forNum = Math.ceil((resetStartWeek + dayNum) / 7) * 7
       let selectDay = setDay || this.selectDay.day
-      // let selectDay = setDay ? setDay : this.selectDay.day
-      // this.$emit('getDateList', {
-      //   setYear: now.getFullYear(),
-      //   setMonth: now.getMonth() + 1,
-      // })
-      // if (this.open) {
-      //   // 展开状态，需要渲染完整的月份
-      //   for (let i = 0; i < forNum; i++) {
-      //     const now2 = new Date(now)
-      //     now2.setDate(i - resetStartWeek + 1)
-      //     let obj = {}
-      //     obj = {
-      //       day: now2.getDate(),
-      //       month: now2.getMonth() + 1,
-      //       year: now2.getFullYear(),
-      //     }
-      //     dateList[i] = obj
-      //   }
-      // } else {
-      //   // 非展开状态，只需要渲染当前周
-      //   for (let i = 0; i < 7; i++) {
-      //     const now2 = new Date(now)
-      //     //当前周的7天
-      //     now2.setDate(Math.ceil((selectDay + (startWeek - 1)) / 7) * 7 - 6 - (startWeek - 1) + i)
-      //     let obj = {}
-      //     obj = {
-      //       day: now2.getDate(),
-      //       month: now2.getMonth() + 1,
-      //       year: now2.getFullYear(),
-      //     }
-      //     dateList[i] = obj
-      //   }
-      // }
-
       const isOpen = this.open
       /**
        * 展开状态，需要渲染完整的月份
@@ -671,12 +562,15 @@ export default Vue.extend({
         ? new Date(date.getFullYear(), date.getMonth() + offset * 1) // 打开状态, 取得当前日期的上个月日期
         : new Date(date.getFullYear(), date.getMonth(), date.getDate() + offset * 7) // 关闭状态, 取得当前日期的七天后的日期
 
-      this.getIndexList({
+      const result = {
         setYear: setDate.getFullYear(),
         setMonth: setDate.getMonth(),
         setDay: setDate.getDate(),
         dateIndex: index
-      })
+      }
+      this.open && delete result.setDay
+
+      this.getIndexList(result)
     },
     /**
      * 上一年

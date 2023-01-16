@@ -5,12 +5,13 @@
         <view class="title">我的打卡记录</view>
         <view class="calendar-content">
           <calendar
-            @getDateList="getDateList"
-            @selectDay="selectDay"
-            @openChange="openChange"
+            :defaultTime="defaultTime"
             :spotMap="spotMap"
             :disabledDate="disabledDateFn"
             :changeTime="changeTime"
+            @getDateList="getDateList"
+            @selectDay="selectDay"
+            @openChange="openChange"
           />
         </view>
       </view>
@@ -25,40 +26,36 @@ import calendar from '../../components/calendar/index.vue'
 export default Vue.extend({
   name: 'group-details',
   components: {
-    calendar,
+    calendar
   },
   data() {
     return {
-      selected: [
-        {
-          date: '2023-01-12', // date为所需要打点的日期
-          type: 'abnormal', // abnormal显示为橙色点
-        },
-        {
-          date: '2023-01-13',
-          type: 'normal', // normal显示为蓝色点
-        },
-      ],
+      defaultTime: '',
       spotMap: {
         y2023m1d13: 'deep-spot',
-        y2023m1d10: 'spot',
+        y2023m1d10: 'spot'
       },
       // 需要改变日期时所使用的字段
       changeTime: '',
       // 存储已经获取过的日期
-      dateListMap: [],
+      dateListMap: []
     }
   },
   computed: {},
   onLoad() {},
-  async onShow() {},
+  async onShow() {
+    const date = new Date()
+
+    // console.log(date.getFullYear())
+    // console.log(date.getMonth() + 1)
+    // console.log(date.getDate())
+
+    this.defaultTime = new Date(date.getFullYear(), date.getMonth()-1, date.getDate() - 1).toString()
+
+    console.log(this.defaultTime)
+    console.log(date.setTime(date.getTime() - 24 * 60 * 60 * 1000))
+  },
   methods: {
-    /**
-     * 选中日期的触发事件
-     */
-    dateChange: function (e) {
-      console.log(e)
-    },
     disabledDateFn({ day, month, year }) {
       // 例子，今天之后的日期不能被选中
       const now = new Date()
@@ -90,8 +87,8 @@ export default Vue.extend({
     // 展开收起时的回调
     openChange({ detail }) {
       console.log(detail, 'openChange detail')
-    },
-  },
+    }
+  }
 })
 </script>
 
@@ -99,8 +96,7 @@ export default Vue.extend({
 .bg {
   position: relative;
   min-height: 100vh;
-  background: url('@/static/group-punch/a3.png'),
-    linear-gradient(180deg, #ffbd79 77%, #ffbd79 100%);
+  background: url('@/static/group-punch/a3.png'), linear-gradient(180deg, #ffbd79 77%, #ffbd79 100%);
   background-size: 100%;
   background-repeat: no-repeat;
 }
