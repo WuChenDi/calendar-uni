@@ -50,7 +50,7 @@ export default Vue.extend({
     // console.log(date.getMonth() + 1)
     // console.log(date.getDate())
 
-    this.defaultTime = new Date(date.getFullYear(), date.getMonth()-1, date.getDate() - 1).toString()
+    this.defaultTime = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1).toString()
 
     console.log(this.defaultTime)
     console.log(date.setTime(date.getTime() - 24 * 60 * 60 * 1000))
