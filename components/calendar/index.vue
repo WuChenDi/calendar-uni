@@ -64,7 +64,8 @@
                 :data-year="item.year"
                 :data-month="item.month"
               >
-                {{ !signFnClass(item, selectDay, spotMap) ? item.day : '' }}
+                <!-- {{ !signFnClass(item, selectDay, spotMap) ? item.day : '' }} -->
+                {{ dayTextFn(item, index) }}
               </view>
             </view>
           </view>
@@ -86,14 +87,18 @@ import Vue from 'vue'
 export default Vue.extend({
   name: 'calendar',
   props: {
-    //标点的日期
+    // 标点的日期
     spotMap: {
       type: Object,
       default() {
         return {}
       }
     },
-    //标记的日期，默认为今日 注意：传入格式推荐为'2022/1/2'或'2022/01/02', 其他格式在ios系统上可能出现问题
+    /**
+     * 选中时间（不传默认为今日）
+     *
+     * 标记的日期，默认为今日 注意：传入格式推荐为'2022/1/2'或'2022/01/02', 其他格式在ios系统上可能出现问题
+     */
     defaultTime: {
       type: String,
       default: ''
@@ -211,15 +216,53 @@ export default Vue.extend({
       return item.year === nowDay.year && item.month === nowDay.month && item.day === nowDay.day ? 'now' : ''
     },
     /**
-     * 日期渲染字段，单前只有日期跟今天，作为扩展方法（未完成）
+     * 日期渲染字段，单前只有日期跟今天，作为扩展方法
      *
      * 例如： 16 或 今
      * @param item
      * @returns {any}
      */
-    dayTextFn(item) {
-      return !!this.hasNowFnClass(item, this.nowDay) ? '今' : item.day
-      // return item.day
+    dayTextFn(item, index) {
+      const { selectDay, spotMap, nowDay, calendar, oldCurrent } = this
+
+      let state = false
+      let text = ''
+
+      // 标记（已打卡）
+      if (!!this.signFnClass(item, selectDay, spotMap)) {
+        state = true
+        text = ''
+      }
+
+      // 今天
+      if (!!this.hasNowFnClass(item, nowDay)) {
+        state = true
+        text = '今'
+      }
+
+      // 今天+选中
+      if (!!this.hasNowFnClass(item, nowDay) && !!this.hasSelectFnClass(item, calendar, oldCurrent, index)) {
+        state = true
+        text = ''
+      }
+
+      // 今天+标记（已打卡）
+      if (!!this.hasNowFnClass(item, nowDay) && !!this.signFnClass(item, selectDay, spotMap)) {
+        state = true
+        text = ''
+      }
+
+      // 今天+标记（已打卡）+选中
+      if (
+        !!this.hasNowFnClass(item, nowDay) &&
+        !!this.signFnClass(item, selectDay, spotMap) &&
+        !!this.hasSelectFnClass(item, calendar, oldCurrent, index)
+      ) {
+        state = true
+        text = '今'
+      }
+
+      return state ? text : item.day
     },
     /**
      * 当前月的逻辑计算(其他月的日期变灰)
@@ -872,7 +915,7 @@ export default Vue.extend({
 
       // 今日日期
       .now {
-        background-image: url('@/static/group-punch/a25.png');
+        background-image: url('@/static/group-punch/a28.png');
         background-size: 100% auto;
         color: #fff;
       }
@@ -886,6 +929,20 @@ export default Vue.extend({
 
       // 今日日期+选中
       .now.select {
+        background-image: url('@/static/group-punch/a30.png');
+        background-size: 100% auto;
+        color: #fff;
+      }
+
+      // 今日日期+标记
+      .now.sign {
+        background-image: url('@/static/group-punch/a29.png');
+        background-size: 100% auto;
+        color: #fff;
+      }
+
+      // 今日日期+选中+标记
+      .sign.now.select {
         background-image: url('@/static/group-punch/a26.png');
         background-size: 100% auto;
         color: #fff;

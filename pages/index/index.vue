@@ -32,7 +32,7 @@ export default Vue.extend({
     return {
       defaultTime: '',
       spotMap: {
-        y2023m1d13: 'deep-spot',
+        y2023m1d17: 'deep-spot',
         y2023m1d10: 'spot'
       },
       // 需要改变日期时所使用的字段
@@ -44,16 +44,13 @@ export default Vue.extend({
   computed: {},
   onLoad() {},
   async onShow() {
-    const date = new Date()
-
+    // const date = new Date()
     // console.log(date.getFullYear())
     // console.log(date.getMonth() + 1)
     // console.log(date.getDate())
-
-    this.defaultTime = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1).toString()
-
-    console.log(this.defaultTime)
-    console.log(date.setTime(date.getTime() - 24 * 60 * 60 * 1000))
+    // this.defaultTime = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1).toString()
+    // console.log(this.defaultTime)
+    // console.log(date.setTime(date.getTime() - 24 * 60 * 60 * 1000))
   },
   methods: {
     disabledDateFn({ day, month, year }) {
@@ -109,9 +106,10 @@ export default Vue.extend({
     padding-top: 126rpx;
     padding-bottom: 38rpx;
     background-image: url($topImg), url('@/static/group-punch/a7.png');
-    background-size: 100% 128px, 100% 40rpx;
+    background-size: 100% 80px, 100% 40rpx;
     background-position: left top, left bottom;
     background-repeat: no-repeat, no-repeat;
+
     .title {
       position: absolute;
       top: 16rpx;
@@ -124,6 +122,7 @@ export default Vue.extend({
       color: #fa6044;
     }
   }
+
   @mixin boxMiddle {
     padding: 0 56rpx;
     background: url('@/static/group-punch/a8.png') repeat-y;
@@ -132,36 +131,16 @@ export default Vue.extend({
 
   .calendar-box {
     @include boxStyle('@/static/group-punch/a6.png');
-    padding-top: 100rpx;
     height: auto;
     margin-top: 0;
+
+    .title {
+      top: 30rpx;
+    }
+
     .calendar-content {
       @include boxMiddle;
       padding: 0 24rpx;
-    }
-  }
-  .rules-box {
-    @include boxStyle('@/static/group-punch/a6.png');
-    height: auto;
-    margin-top: 48rpx;
-    .rules-content {
-      @include boxMiddle;
-      padding: 30px 56rpx;
-      color: #e96400;
-      font-size: 28rpx;
-      .activity-date {
-        .tlt {
-          font-weight: 500;
-          margin-bottom: 16rpx;
-        }
-        .content {
-          white-space: pre-line;
-          line-height: 40rpx;
-        }
-      }
-      .mt32 {
-        margin-top: 32rpx;
-      }
     }
   }
 }
