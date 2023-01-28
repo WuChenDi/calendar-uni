@@ -5,6 +5,8 @@
         <view class="title">我的打卡记录</view>
         <view class="calendar-content">
           <calendar
+            :goNow="true"
+            disabledTips="不在活动日期范围内"
             :defaultTime="defaultTime"
             :spotMap="spotMap"
             :disabledDate="disabledDateFn"

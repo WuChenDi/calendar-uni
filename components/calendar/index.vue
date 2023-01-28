@@ -124,7 +124,9 @@ export default Vue.extend({
     changeTime: {
       type: String,
       default: ''
-    }
+    },
+    // 点击禁止提示文案
+    disabledTips: String
   },
   data() {
     return {
@@ -163,13 +165,6 @@ export default Vue.extend({
       if (!value) return
 
       this.witchDate(new Date(value))
-    },
-    selectDay: {
-      handler(val) {
-        console.log(val)
-        console.log(this.nowDay)
-      },
-      immediate: true
     }
   },
   created() {},
@@ -463,8 +458,12 @@ export default Vue.extend({
       this.setSwiperHeight(this.oldCurrent)
     },
 
-    // 选中并切换今日日期
-    witchDate(setDate, selectDayState = true) {
+    /**
+     * 选中并切换今日日期
+     * @param setDate
+     * @param isSyncCalendar 同步设置 calendar
+     */
+    witchDate(setDate, isSyncCalendar = false) {
       const selectDate = new Date(this.selectDay.year, this.selectDay.month - 1, this.selectDay.day)
       let dateDiff =
         (selectDate.getFullYear() - setDate.getFullYear()) * 12 + (selectDate.getMonth() - setDate.getMonth())
@@ -493,19 +492,24 @@ export default Vue.extend({
       this.swiperCurrent = diffSum(this.oldCurrent + diff)
       this.oldCurrent = diffSum(this.oldCurrent + diff)
       this.backChange = dateDiff !== 0
-      if (selectDayState) {
-        this.selectDay = {
-          year: setDate.getFullYear(),
-          month: setDate.getMonth() + 1,
-          day: setDate.getDate()
-        }
+
+      this.selectDay = {
+        year: setDate.getFullYear(),
+        month: setDate.getMonth() + 1,
+        day: setDate.getDate()
       }
-      this.triggerEventSelectDay()
-      this.setSwiperHeight(this.oldCurrent)
+      if (isSyncCalendar) {
+        this.calendar = this.selectDay
+      }
+
+      this.$nextTick(() => {
+        this.triggerEventSelectDay()
+        this.setSwiperHeight(this.oldCurrent)
+      })
     },
     // 切换到今天
     switchNowDate() {
-      this.witchDate(new Date())
+      this.witchDate(new Date(), true)
     },
 
     /**
@@ -565,8 +569,13 @@ export default Vue.extend({
      * @param e
      */
     selectChange(e) {
+      const { disabledTips } = this
       const { year, month, day, disabled } = e.currentTarget.dataset
       const selectDay = { year, month, day }
+
+      if (disabled && !!disabledTips) {
+        uni.showToast({ title: disabledTips, icon: 'none' })
+      }
 
       if (this.open && (this.selectDay.year !== year || this.selectDay.month !== month)) {
         if (year * 12 + month > this.selectDay.year * 12 + this.selectDay.month) {
