@@ -1,8 +1,10 @@
 # Calendar component
 
+> **tips: Please see the latest version [Link](https://github.com/WuChenDi/uni-app-mini)**
+>
 > 由 **uniapp** 开发编译微信小程序组件（其他平台未测试）
 
-## 效果截图
+## Effect Screenshot
 
 ![demo](./screenshots/demo.png)
 
